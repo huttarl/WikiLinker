@@ -1,0 +1,12 @@
+What types of scripts and stuff do we need?
+- background scripts, for initialization?
+- page actions / browser actions? what's the difference?
+  - Show a popup interface and a button to autolink.
+- content scripts, to modify the textarea content? (these have to communicate with other
+    components via message passing!)
+??
+- somewhere add keyboard shortcuts for
+  - link selected word
+  - autolink edited entry
+
+

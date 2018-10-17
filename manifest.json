@@ -1,0 +1,25 @@
+{
+  "manifest_version": 2,
+
+  "name": "Wiktionary Linker",
+  "description": "Automatically add links to words in a Wiktionary page.",
+  "version": "1.0",
+
+  "content_scripts": [
+    {
+      "matches": ["https://*.wiktionary.org/w/index.php?title=*&action=edit&section=*"]
+      //, "css": ["myStyles.css"]
+      //, "js": ["contentScript.js"]
+    }
+  ],
+
+  "browser_action": 
+"page_action": {
+      "default_popup": "popup.html",
+    },
+    
+  "permissions": [
+    "activeTab"
+  ]
+}
+
