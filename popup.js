@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
          // execute the script that gets injected into page of the current tag
          chrome.tabs.executeScript(null, {file: "content.js"}, function () {
             // send a message to content script
-            chrome.tabs.sendMessage(tab.id, "Background page started.", function (response) {
+            chrome.tabs.sendMessage(tab.id, "autolink", function (response) {
                // got response
                bkg.console.log("got response");
             });

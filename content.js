@@ -1,10 +1,18 @@
 chrome.runtime.onMessage.addListener(function (msg, _, sendResponse) {
-   console.log('Got message in content.js');
-   textbox = document.getElementById('wpTextbox1');
-   var lines = textbox.value.split('\n');
-   newLines = autolinkLines(lines);
-   textbox.value = newLines.join('\n');
-   sendResponse("Done");
+   switch (msg) {
+      case "toggleLinkSelectedWord":
+         toggleLinkWord();
+         break;
+
+      case "autolink":
+         console.log('Got message in content.js');
+         textbox = document.getElementById('wpTextbox1');
+         var lines = textbox.value.split('\n');
+         newLines = autolinkLines(lines);
+         textbox.value = newLines.join('\n');
+         sendResponse("Done");
+         break;
+   } 
 });
 
 function autolinkLines(lines) {
@@ -40,3 +48,37 @@ function autolinkLines(lines) {
    }
    return newLines;
 }
+
+function toggleLinkWord() {
+   var textbox = document.getElementById('wpTextbox1');
+   var text = textbox.value;
+   var start = textbox.selectionStart, end = textbox.selectionEnd;
+   if (start == end) {
+      // No text is selected, so figure out word bounds.
+      // TODO...
+      return;
+   }
+
+   // Some text is selected.
+   // Back up over preceding brackets:
+   for (; start > 0 && text[start - 1] == '['; start--)
+      ;
+
+   if (text[start] == '[') {
+      // Unlink selection
+      end = text.indexOf(']', start);
+      // TODO: don't assume there are exactly 2 '['s?
+      // or that selection ends just before "]]".
+      text = text.substring(0, start) + text.substring(start + 2, end) +
+         text.substring(end + 2);
+      textbox.value = text;
+      textbox.selectionStart = textbox.selectionEnd = end - 2;
+      return;
+   } else {
+      // Link selection
+      text = text.substring(0, start) + '[[' + text.substring(start, end) +
+         ']]' + text.substring(end);
+   }
+
+}
+
