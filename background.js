@@ -10,10 +10,9 @@ chrome.runtime.onInstalled.addListener(function() {
           new chrome.declarativeContent.PageStateMatcher({
             pageUrl: {
               // E.g. https://ku.wiktionary.org/w/index.php?title=serbixwey%C3%AE&action=edit&section=1
-              hostSuffix: 'wiktionary.org'
-              // ,
-              // pathEquals: 'w/index.php',
-              // queryContains: 'action=edit'
+              hostSuffix: 'wiktionary.org',
+              pathEquals: '/w/index.php',
+              queryContains: 'action=edit'
             }
           })
         ],
