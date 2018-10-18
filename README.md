@@ -1,5 +1,5 @@
 # WiktionaryLinker
-Chrome extension to automatically add links to words in wiktionary entries.
+A Chrome extension to automatically add links to words in wiktionary entries.
 
 The idea of this extension is to provide automated help to the task of "linkifying" words in Wiktionary entries. (Possibly Wikipedia entries too... we'll see.)
 
@@ -9,12 +9,6 @@ When you are editing a wiktionary entry, this extension provides an "Autolink" b
 - A list of "trivial words" allows the user to exclude those words.
 - Maybe at some point: A "minimum common prefix" and "maximum common suffix" setting 
 
-In addition, the keyboard shortcut 'TBD' toggles linkage of the word containing the cursor.
+In addition, the keyboard shortcut 'Alt+H' toggles linkage of the word containing the cursor. If multiple words are selected, all of them will be linked together as one, e.g. [[TV Series]].
 
-The autolinker will not affect words that are already part of a wiki link.
-
-TBD:
-- Will the autolinker only link to existing entries? (That could be a setting.) If so, the extension will need to use the wiki APIs to query lists of headwords starting with a certain prefix.
-- What will the default keyboard shortcut be?
-- We'll probably need to add a way to change the shortcut key.
-
+The autolinker will not affect words that are already part of a wiki link, nor words that are part of a heading.

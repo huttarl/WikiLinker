@@ -5,21 +5,28 @@
   "description": "Automatically add links to words in a Wiktionary page.",
   "version": "1.0",
 
-  "content_scripts": [
-    {
-      "matches": ["https://*.wiktionary.org/w/index.php?title=*&action=edit&section=*"]
-      //, "css": ["myStyles.css"]
-      //, "js": ["contentScript.js"]
-    }
-  ],
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
 
-  "browser_action": 
-"page_action": {
-      "default_popup": "popup.html",
-    },
+  "page_action": {
+    "default_title": "Wiktionary Linker",
+    "default_popup": "popup.html",
+    "default_icon": "icon.png"
+  },
     
   "permissions": [
-    "activeTab"
-  ]
+    "activeTab", "declarativeContent"
+  ],
+
+  "commands": {
+    "toggle_link_selected_word": {
+      "description": "Link (or unlink) the selected word",
+      "suggested_key": {
+        "default": "Alt+H"
+      }
+    }
+  }
 }
 
