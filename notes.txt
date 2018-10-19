@@ -1,19 +1,5 @@
-What types of scripts and stuff do we need?
-- background scripts, for initialization?
-- page actions / browser actions? what's the difference? "Use the chrome.pageAction API to put icons in the main Google Chrome toolbar, to the right of the address bar. Page actions represent actions that can be taken on the current page, but that aren't applicable to all pages. Page actions appear grayed out when inactive." Sounds like we want page_action.
-  - Show a popup interface and a button to autolink.
-- content scripts, to modify the textarea content? (these have to communicate with other
-    components via message passing!)
-??
-- somewhere add keyboard shortcuts for
-  - link selected word
-  - autolink edited entry
-
-
-
 TBD:
 - Will the autolinker only link to existing entries? (That could be a setting.) If so, the extension may need to use the wiki APIs to query lists of headwords starting with a certain prefix.
-- What will the default keyboard shortcut(s) be?
-- We'll probably need to add a way to change the shortcut key(s).
-- We probably need a keyboard shortcut for the Autolink button.
-
+- How do I get the text changes made by this extension to be part of the Undo/Redo stack?
+  See https://stackoverflow.com/a/39948207/423105: use execCommand("insertText") and related functions.
+  
