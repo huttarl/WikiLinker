@@ -1,7 +1,7 @@
-# WiktionaryLinker
-A Chrome extension to automatically add links to words in wiktionary entries.
+# WikiLinker
+A Chrome extension to automatically add links to words in wiki entries. (Initially, this is being developed for Wiktionary, but it should be easy to adapt for similar wikis.)
 
-The idea of this extension is to provide automated help to the task of "linkifying" words in Wiktionary entries. (Possibly Wikipedia entries too... we'll see.)
+The idea of this extension is to provide automated help to the task of "linkifying" words in Wiktionary entries.
 
 When you are editing a wiktionary entry, this extension provides an "Autolink" button that will surround individual words with [[link markup]]. Settings can be used to customize which words will be autolinked:
 
