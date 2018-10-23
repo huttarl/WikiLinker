@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
 
-  "name": "Wiktionary Linker",
-  "description": "Automatically add links to words in a Wiktionary page.",
+  "name": "Wiki Linker",
+  "description": "Automatically add links to words in a wiki page.",
   "version": "0.1",
 
   "background": {
@@ -11,7 +11,7 @@
   },
 
   "page_action": {
-    "default_title": "Wiktionary Linker",
+    "default_title": "Wiki Linker",
     "default_popup": "popup.html",
     "default_icon": "icon.png"
   },
