@@ -2,24 +2,27 @@ chrome.runtime.onMessage.addListener(function (msg, _, sendResponse) {
    switch (msg) {
       case "toggleLinkSelectedWord":
          toggleLinkWord();
+         sendResponse("Done");
          break;
 
       case "autolink":
-         console.log('Got message in content.js');
+         // console.log('Got message in content.js');
          textbox = document.getElementById('wpTextbox1');
          var lines = textbox.value.split('\n');
-         newLines = autolinkLines(lines);
-         textbox.value = newLines.join('\n');
+         changedLines = autolinkLines(lines);
+         textbox.focus();
+         textbox.select();
+         document.execCommand('insertText', false, changedLines.join('\n'));
          sendResponse("Done");
          break;
    } 
 });
 
-let wordRegexp = /^[-\p{L}]+$/u, letterRegexp = /[-\p{L}]/u;
+var wordRE = /^[-\p{L}]+$/u, letterRE = /[-\p{L}]/u;
 
 function autolinkLines(lines) {
-   console.log("text lines", lines.length, lines[0].substring(0, 10));
-   var newLines = [];
+   // console.log("text lines", lines.length, lines[0].substring(0, 10));
+   var changedLines = [];
    var numLines = lines.length;
    // The following requires Unicode property escapes. See
    // https://stackoverflow.com/a/48902765/423105
@@ -30,7 +33,7 @@ function autolinkLines(lines) {
 
       if (line[0] == '=') {
          // Leave header lines unchanged
-         newLines[i] = line;
+         changedLines[i] = line;
          continue;
       }
 
@@ -38,21 +41,22 @@ function autolinkLines(lines) {
          // Check whether word is really a word (excludes words already linked
          // because "[]" are not allowed.)
          // TODO: fix the case where multiple words are already within a [[ ]].
-         if (word.length > minimumLength && word.match(wordRegexp)) {
+         if (word.length > minimumLength && word.match(wordRE)) {
             return '[[' + word + ']]';
          } else {
             return word;
          }
       });
 
-      newLines[i] = words.join(' ');
+      changedLines[i] = words.join(' ');
    }
-   return newLines;
+   return changedLines;
 }
 
-const lastLineEndingOrLinkBoundaryRegexp = /^.*(\]\]|\[\[|\n)(.*?)$/,
-   nonWordCharacterRegexp = /[^-\p{L}]/u,
-   lastNonWordCharacterRegexp = /^.*([^-\p{L}])(.*?)$/u;
+var lastLineEndingOrLinkBoundaryRE = /^.*(\]\]|\[\[|\n)(.*?)$/,
+   nonWordCharacterRE = /[^-\p{L}]/u,
+   finalWordCharactersRE = /[-\p{L}]+$/u,
+   lastNonWordCharacterRE = /^.*([^-\p{L}])([-\p{L}]*)$/u;
 
 function toggleLinkWord() {
    const textbox = document.getElementById('wpTextbox1');
@@ -62,31 +66,40 @@ function toggleLinkWord() {
    const noSelection = (start == end);
    let isInALink;
 
+   // console.log('start, end:', start, end);
+
    if (noSelection) {
+      // console.log('noSelection');
       // No text is selected.
       // Is caret in (or at the beginning of) a link already?
-      let matches = text.substring(0, start + 2).match(lastLineEndingOrLinkBoundaryRegexp);
+      let matches = text.substring(0, start + 2).match(lastLineEndingOrLinkBoundaryRE);
+      // console.log('matches', matches); // temporary debugging
       isInALink = (matches && matches[1] == '[[');
       // If so, set caret to beginning of the link.
-      console.log('isInALink', isInALink);
+      // console.log('isInALink', isInALink);
       if (isInALink) {
          start = start - matches[2].length - assumeTwo;
+         // console.log('start, end:', start, end);
          textbox.setSelectionRange(start, end);
          // Fall through to case where text is already selected.
       } else {
          // Otherwise, find word bounds and select.
          // Are we in a word now?
-         if (text.charAt(start).match(letterRegexp)) {
+         if (text.charAt(start).match(letterRE)) {
             // Find preceding non-word character.
-            let m = text.substring(0, start).search(lastNonWordCharacterRegexp);
-            start -= m ? m[2].length : 0;
+            let m = text.substring(0, start).match(finalWordCharactersRE);
+            // console.log('lastNonWordChar:', '"' + text.substring(0, start) + '"', lastNonWordCharacterRE, m);
+            // console.log('m', m); // temporary debugging
+            start -= (m ? m[0].length : 0);
             // Find following non-word character.
-            let i = text.substring(start).search(nonWordCharacterRegexp);
+            let i = text.substring(end).search(nonWordCharacterRE);
             if (i > -1) {
-               end = start + i;
+               end = end + i;
             }
+            // console.log('In a word. start, end:', start, end);
          } else {
             // Not in a word? Do nothing.
+            // console.log('Not in a word.');
             return;
          }
       }
@@ -101,6 +114,8 @@ function toggleLinkWord() {
    for (numRight = 0; end > 0 && text[end - 1] == ']'; end--, numRight++)
       ;
 
+   // console.log('After backing up: start, end:', start, end);
+
    textbox.focus();
 
    // document.execCommand('insertText', false, String.fromCharCode(8253));
@@ -112,16 +127,16 @@ function toggleLinkWord() {
       const s2 = start + assumeTwo;
       end = text.indexOf(']', s2);
       const textToUnlink = text.substring(s2, s2 + end);
+      // console.log('Unlinking. start, end:', start, end);
       textbox.setSelectionRange(start, s2 + end + assumeTwo); // Select link including [[ ]].
       document.execCommand('insert', false, textToUnlink); // Replace without [[ ]].
    } else {
       // Link the selected text.
+      // console.log('Linking. start, end:', start, end);
       const selectedText = text.substring(start, end);
+      // We can get here by multiple paths; the "selected text" might not have been selected yet.
+      textbox.setSelectionRange(start, end);
       document.execCommand('insertText', false, '[[' + selectedText + ']]');
-      remainder = text.substring(end);
-      text = text.substring(0, start) + '[[' + text.substring(start, end) +
-         ']]' + remainder;
-      end += 4;
    }
 
    // textbox.value = text;
