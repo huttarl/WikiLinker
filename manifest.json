@@ -3,7 +3,7 @@
 
   "name": "Wiktionary Linker",
   "description": "Automatically add links to words in a Wiktionary page.",
-  "version": "1.0",
+  "version": "0.1",
 
   "background": {
     "scripts": ["background.js"],

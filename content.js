@@ -26,7 +26,7 @@ function autolinkLines(lines) {
    var numLines = lines.length;
    // The following requires Unicode property escapes. See
    // https://stackoverflow.com/a/48902765/423105
-   var minimumLength = 3; // TODO: get this from extension setting.
+   var minimumLength = 4; // TODO: get this from extension setting.
 
    for (var i=0; i < numLines; i++) {
       line = lines[i];
