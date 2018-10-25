@@ -53,7 +53,7 @@ function autolinkLines(lines) {
    return changedLines;
 }
 
-var lastLineEndingOrLinkBoundaryRE = /^.*(\]\]|\[\[|\n)(.*?)$/,
+var lastLineEndingOrLinkBoundaryRE = /(\]\]|\[\[|\n)(?!.*(\]\]|\[\[|\n))(.*)$/,
    nonWordCharacterRE = /[^-\p{L}]/u,
    finalWordCharactersRE = /[-\p{L}]+$/u,
    lastNonWordCharacterRE = /^.*([^-\p{L}])([-\p{L}]*)$/u;
@@ -66,20 +66,27 @@ function toggleLinkWord() {
    const noSelection = (start == end);
    let isInALink;
 
-   // console.log('start, end:', start, end);
+   console.log('start, end:', start, end);
+
+   const assumeTwo = 2; // Assume two left and right brackets exist in the text.
 
    if (noSelection) {
-      // console.log('noSelection');
+      console.log('noSelection');
       // No text is selected.
       // Is caret in (or at the beginning of) a link already?
       let matches = text.substring(0, start + 2).match(lastLineEndingOrLinkBoundaryRE);
-      // console.log('matches', matches); // temporary debugging
+      console.log('matches', matches); // temporary debugging
       isInALink = (matches && matches[1] == '[[');
       // If so, set caret to beginning of the link.
-      // console.log('isInALink', isInALink);
+      console.log('isInALink', isInALink);
       if (isInALink) {
-         start = start - matches[2].length - assumeTwo;
-         // console.log('start, end:', start, end);
+         // The documentation for how javascript regexps number their capturing groups
+         // for negative lookahead is unclear. According to
+         // https://www.regular-expressions.info/lookaround.html it seems it should be
+         // group 2, but in Chrome it seems to be 3. Take the last group.
+         var lastGroup = matches[matches.length - 1];
+         start = start - lastGroup.length - assumeTwo;
+         console.log('start, end:', start, end);
          textbox.setSelectionRange(start, end);
          // Fall through to case where text is already selected.
       } else {
@@ -88,18 +95,19 @@ function toggleLinkWord() {
          if (text.charAt(start).match(letterRE)) {
             // Find preceding non-word character.
             let m = text.substring(0, start).match(finalWordCharactersRE);
-            // console.log('lastNonWordChar:', '"' + text.substring(0, start) + '"', lastNonWordCharacterRE, m);
-            // console.log('m', m); // temporary debugging
+            // console.log('finalWordCharactersRE:', '"' + text.substring(0, start) + '"',
+            //    finalWordCharactersRE, m);
+            console.log('m', m); // temporary debugging
             start -= (m ? m[0].length : 0);
             // Find following non-word character.
             let i = text.substring(end).search(nonWordCharacterRE);
             if (i > -1) {
                end = end + i;
             }
-            // console.log('In a word. start, end:', start, end);
+            console.log('In a word. start, end:', start, end);
          } else {
             // Not in a word? Do nothing.
-            // console.log('Not in a word.');
+            console.log('Not in a word.');
             return;
          }
       }
@@ -114,25 +122,23 @@ function toggleLinkWord() {
    for (numRight = 0; end > 0 && text[end - 1] == ']'; end--, numRight++)
       ;
 
-   // console.log('After backing up: start, end:', start, end);
+   console.log('After backing up: start, end:', start, end);
 
    textbox.focus();
 
    // document.execCommand('insertText', false, String.fromCharCode(8253));
 
-   const assumeTwo = 2; // Assume two left and right brackets exist in the text.
-
    if (isInALink || text[start] == '[') {
       // Unlink the selected text.
       const s2 = start + assumeTwo;
       end = text.indexOf(']', s2);
-      const textToUnlink = text.substring(s2, s2 + end);
-      // console.log('Unlinking. start, end:', start, end);
-      textbox.setSelectionRange(start, s2 + end + assumeTwo); // Select link including [[ ]].
-      document.execCommand('insert', false, textToUnlink); // Replace without [[ ]].
+      const textToUnlink = text.substring(s2, end);
+      console.log('Unlinking. start, end, textToUnlink:', start, end, textToUnlink);
+      textbox.setSelectionRange(start, end + assumeTwo); // Select link including [[ ]].
+      document.execCommand('insertText', false, textToUnlink); // Replace without [[ ]].
    } else {
       // Link the selected text.
-      // console.log('Linking. start, end:', start, end);
+      console.log('Linking. start, end:', start, end);
       const selectedText = text.substring(start, end);
       // We can get here by multiple paths; the "selected text" might not have been selected yet.
       textbox.setSelectionRange(start, end);
