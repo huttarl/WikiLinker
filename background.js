@@ -33,13 +33,13 @@ chrome.runtime.onInstalled.addListener(function() {
 
 function toggleLinkSelectedWord() {
   console.log("toggleLinkSelectedWord");
-  // execute the script that gets injected into page of the current tag
-  chrome.tabs.executeScript(null, {file: "content.js"}, function () {
+  // // execute the script that gets injected into page of the current tag
+  // chrome.tabs.executeScript(null, {file: "content.js"}, function () {
     // send a message to content 
     chrome.tabs.getSelected(null, function(tab) {
       chrome.tabs.sendMessage(tab.id, "toggleLinkSelectedWord", function (response) {
          // got response
       });
     });
-  });
+  // });
 }

@@ -154,7 +154,7 @@ function toggleLinkWord() {
    //    start += end;
    // }
    // textbox.setSelectionRange(start, start);
-   textbox.focus();
+   // textbox.focus();
    return;
 }
 
