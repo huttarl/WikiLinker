@@ -1,11 +1,11 @@
 chrome.runtime.onMessage.addListener(function (msg, _, sendResponse) {
    switch (msg) {
-      case "toggleLinkSelectedWord":
+      case "toggle_link_selected_word":
          toggleLinkWord();
          sendResponse("Done");
          break;
 
-      case "autolink":
+      case "toggle_link_all":
          // console.log('Got message in content.js');
          textbox = document.getElementById('wpTextbox1');
          var lines = textbox.value.split('\n');

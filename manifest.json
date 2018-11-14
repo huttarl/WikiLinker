@@ -33,6 +33,12 @@
       "suggested_key": {
         "default": "Alt+H"
       }
+    },
+    "toggle_link_all": {
+      "description": "Auto-link all words in text",
+      "suggested_key": {
+        "default": "Shift+Alt+H"
+      }
     }
   }
 }

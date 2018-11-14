@@ -23,23 +23,16 @@ chrome.runtime.onInstalled.addListener(function() {
   });
   chrome.commands.onCommand.addListener(function(command) {
     console.log('Command:', command);
-    switch (command) {
-      case 'toggle_link_selected_word': 
-        toggleLinkSelectedWord();
-        break;
-    }
-  });
-});
-
-function toggleLinkSelectedWord() {
-  console.log("toggleLinkSelectedWord");
-  // // execute the script that gets injected into page of the current tag
-  // chrome.tabs.executeScript(null, {file: "content.js"}, function () {
+    // Send message to selected tab
+    // // execute the script that gets injected into page of the current tag
+    // chrome.tabs.executeScript(null, {file: "content.js"}, function () {
     // send a message to content 
     chrome.tabs.getSelected(null, function(tab) {
-      chrome.tabs.sendMessage(tab.id, "toggleLinkSelectedWord", function (response) {
+      chrome.tabs.sendMessage(tab.id, command, function (response) {
          // got response
       });
     });
   // });
-}
+  });
+});
+
